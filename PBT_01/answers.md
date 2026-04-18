@@ -137,6 +137,15 @@
     - Dòng 2 — `<html>` thiếu lang
     - Sửa: `<html lang="vi">`
 
+# Câu B4
+Chọn Tiki.vn
+1. 3 thẻ semantic HTML5 mà trang đó sử dụng là:thẻ `<header>` ,`<main>`,`<footer>` đều nằm trong thẻ `<div class="Home-page">` ![alt text](screenshots/1.png)
+2. Mở tab Elements, tìm 1 <table> trên trang. Chụp screenshot và trả lời:
+- Table đó hiển thị nội dung ảnh điện thoại,giá tiền,thông số chi tiết ,so sánh giữa các diện thoại 
+- Có sử dụng `<thead>`,`<tbody>`
+- link ảnh : ![alt text](screenshots/2.png)
+
+
 
 
 
