@@ -105,6 +105,38 @@
     - Lồng nhiều table làm code dài và khó sửa  
     - Google khó hiểu cấu trúc trang  
 
+# Câu B3
+ * Lỗi 1: DOCTYPE sai
+    - Dòng 1 — `<!DOCTYPE>` thiếu chuẩn HTML5
+    - Sửa: `<!DOCTYPE html>`
+ * Lỗi 2: meta charset sai
+    - Dòng 4 — utf8 sai chuẩn
+    -  Sửa: UTF-8
+ * Lỗi 3: thiếu đóng thẻ title
+    - Dòng 4–5 — `<title>` chưa đóng
+    - Sửa: thêm `</title>`
+ * Lỗi 4: h1 sai cú pháp
+    - Dòng 8 — `<h1>` không đóng đúng
+    - Sửa: `<h1>...</h1>`
+ * Lỗi 5: link sai cú pháp
+    - Dòng 12 — `<a href="home">` thiếu # + thiếu đóng thẻ
+    - Sửa: `<a href="#home">...</a>`
+* Lỗi 6: ảnh thiếu alt + sai chuẩn
+    - Dòng 19 — thiếu alt và quotes
+    - Sửa: src="iphone.jpg" alt="iPhone"
+ * Lỗi 7: thẻ b sai đóng
+    - Dòng 21 — `<b>` và `</b>` sai vị trí
+    - Sửa: `<b>25.990.000đ</b>`
+ * Lỗi 8: thiếu đóng thẻ p
+    - Dòng 35 — `<p>`Copyright 2026 chưa đóng
+    - Sửa: `</p>`
+ * Lỗi 9: dùng 2 thẻ main (semantic sai)
+    - Dòng 38 — chỉ được 1 `<main>`
+    - Sửa: đổi main thứ 2 thành `<aside>`
+ * Lỗi 10: thiếu lang trong html
+    - Dòng 2 — `<html>` thiếu lang
+    - Sửa: `<html lang="vi">`
+
 
 
 
