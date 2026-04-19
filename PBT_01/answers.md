@@ -145,6 +145,147 @@ Chọn Tiki.vn
 - Có sử dụng `<thead>`,`<tbody>`
 - link ảnh : ![alt text](screenshots/2.png)
 
+# Câu C1  — Thiết kế cấu trúc
+
+```html
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Trang bán sản phẩm</title>
+</head>
+
+<body>
+
+    <header> 
+        <!-- header vì đây là phần đầu trang, chứa logo + thanh điều hướng -->
+        
+        <nav> 
+            <!-- nav vì đây là khu vực điều hướng chính của website -->
+        </nav>
+    </header>
+
+
+    <nav aria-label="breadcrumb"> 
+        <!-- nav vì đây là điều hướng phụ (breadcrumb) -->
+        <!-- aria-label giúp hỗ trợ accessibility -->
+        
+        <ol>
+            <!-- ol vì breadcrumb có thứ tự rõ ràng -->
+            
+            <li><a href="/">Trang chủ</a></li>
+            <!-- li vì mỗi bước trong breadcrumb là một mục -->
+            
+            <li><a href="/dien-thoai">Điện thoại</a></li>
+            <li>iPhone 16</li>
+        </ol>
+    </nav>
+
+
+    <main> 
+        <!-- main vì đây là nội dung chính của trang -->
+
+        <section class="product-gallery">
+            <!-- section vì nhóm nội dung ảnh sản phẩm có chức năng riêng -->
+            
+            <figure>
+                <!-- figure vì chứa nội dung hình ảnh sản phẩm -->
+                <img src="#" alt="Ảnh sản phẩm 1">
+            </figure>
+
+            <div class="thumbnail-list">
+                <!-- div vì chỉ là nhóm layout ảnh nhỏ -->
+                <img src="#" alt="Ảnh 2">
+                <img src="#" alt="Ảnh 3">
+                <img src="#" alt="Ảnh 4">
+                <img src="#" alt="Ảnh 5">
+            </div>
+        </section>
+
+
+        <section class="product-info">
+            <!-- section vì đây là khối thông tin sản phẩm -->
+
+            <h1>Tên sản phẩm</h1>
+            <!-- h1 vì là tiêu đề chính của trang sản phẩm -->
+
+            <p class="price">Giá sản phẩm</p>
+            <!-- p vì đây là đoạn thông tin văn bản -->
+
+            <div class="rating">
+                <!-- div vì nhóm hiển thị đánh giá sao -->
+            </div>
+
+            <p class="description">
+                <!-- p vì mô tả sản phẩm là đoạn văn -->
+            </p>
+        </section>
+
+
+        <section class="specifications">
+            <!-- section vì đây là khu vực thông số kỹ thuật -->
+
+            <table>
+                <!-- table vì dữ liệu dạng bảng -->
+                
+                <thead>
+                    <!-- thead vì chứa tiêu đề bảng -->
+                    <tr>
+                        <th>Thông số</th>
+                        <th>Giá trị</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    <!-- tbody vì chứa dữ liệu chính -->
+                    <tr>
+                        <td>CPU</td>
+                        <td>5 nhân</td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+
+
+        <section class="reviews">
+            <!-- section vì đây là khu vực đánh giá/bình luận -->
+
+            <article>
+                <!-- article vì mỗi bình luận là một nội dung độc lập -->
+                <p>Bình luận người dùng</p>
+            </article>
+        </section>
+
+    </main>
+
+
+    <aside>
+        <!-- aside vì đây là nội dung phụ (sidebar) -->
+
+        <section class="related-products">
+            <!-- section vì nhóm sản phẩm liên quan -->
+            <h2>Sản phẩm tương tự</h2>
+        </section>
+
+    </aside>
+
+
+    <footer>
+        <!-- footer vì đây là phần cuối trang -->
+
+        <p>Thông tin bản quyền</p>
+    </footer>
+
+</body>
+
+</html>
+```
+
+# Câu C2 (10đ) — So sánh & Tranh luận
+
+Quan điểm “dùng `<div>` cho mọi thứ rồi gắn class là đủ, không cần semantic HTML.Tốn thời gian học thẻ mới” là chưa hợp lý nếu xét về chất lượng kỹ thuật và khả năng mở rộng của hệ thống website.Thứ nhất, về SEO (Search Engine Optimization), các thẻ semantic như `<header>`, `<main>,` `<article>`, `<section>` sẽ giúp công cụ tìm kiếm hiểu rõ cấu trúc nội dung. Ví dụ, Google ưu tiên nội dung trong  như `<main>` hoặc `<article>` hơn so với các khối `<div>` không có ngữ nghĩa. Nếu toàn bộ trang chỉ dùng `<div>`, crawler sẽ khó phân biệt đâu là nội dung chính, đâu là sidebar.Điều này dẫn đến việc giảm hiệu quả indexing.Thứ hai, về Accessibility (khả năng tiếp cận), các công cụ đọc màn hình (screen reader) dựa vào semantic HTML để “đọc” trang cho người khiếm thị. Ví dụ, `<nav>` cho biết đây là khu vực điều hướng, giúp người dùng có thể nhảy nhanh,cuộn xuống giữa các menu mà không cần đọc toàn bộ trang. Nếu chỉ dùng `<div>`, người dùng phải nghe toàn bộ nội dung một cách rời rạc, gây ra trải nghiệm rất kém.Ví dụ cụ thể: một trang tin tức sử dụng `<article>` cho mỗi bài viết giúp screen reader hiểu từng bài chính là một đơn vị độc lập. Người dùng có thể “skip” giữa các bài nhanh chóng. Nếu chỉ dùng `<div class="post">`, chức năng này phải phụ thuộc hoàn toàn vào class tùy chỉnh, không được hỗ trợ mặc định bởi trình đọc màn hình.Tuy nhiên, thẻ `<div>` vẫn phù hợp trong nhiều trường hợp, đặc biệt khi chỉ cần tạo layout hoặc nhóm phần tử phục vụ CSS/JS mà không mang ý nghĩa nội dung, ví dụ như container chia cột `(<div class="grid">)` hoặc wrapper cho animation.
+
 
 
 
