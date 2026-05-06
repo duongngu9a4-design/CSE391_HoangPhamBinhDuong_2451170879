@@ -148,7 +148,74 @@ Screen reader (NVDA, VoiceOver…) sẽ đọc tên trường + loại input
     <figcaption>iPhone 16 Pro Max — 25.990.000đ</figcaption>
  </figure>```
   -> Caption cung cấp giá + tên đầy đủ
- 
 
+# Câu C1 — Debug form
 
+Lỗi 1: Dòng 2 — Input "email" không có <label for="...">, vi phạm accessibility
+Sửa:<label for="emial>Email:</label> <input type="email" id="email" name="email" required>
 
+Lỗi 2: Dòng 3 — Input "password" không có <label for="...">, vi phạm accessibility
+Sửa: <label for="password">Nhập mật khẩu:</label> <input type="password" id="password" name="password" required>
+
+Lỗi 3: Dòng 4 — Input "password" của nhập lại mật khẩu không có id name riêng, thiếu <label for="...">, vi phạm accessibility
+Sửa: <label for="confirm">Nhập lại mật khẩu:</label> <input type="password" id="confirm" name="confirm" required>
+
+Lỗi 4: Dòng 5 — Input dùng text với value có sẵn -> sửa lại type tel và nhập value hợp lệ + thêm label for
+Sửa: <label for="phone">Phone:</label> <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+
+Lỗi 5: Dòng 6 — <select> không có label, vi phạm accessibility
+Sửa: <label for="city">Thành phố:</label>
+<select id="city" name="city">
+    <option value="hn">Hà Nội</option>
+    <option value="hcm">TP.HCM</option>
+</select>
+
+Lỗi 6: Dòng 10 — Checkbox "đồng ý" thiếu input Chỉ có label mà không có checkbox
+Sửa: <input type="checkbox" id="agree" name="agree" required> <label for="agree">Tôi đồng ý điều khoản</label>
+
+Lỗi 7: Dòng 13 — Submit dùng value thay vì <button> -> sai
+Sửa: <button type="submit">Gửi</button>
+
+# Câu C2 (10đ) — Thiết kế chiến lược Validation
+1.Regex pattern
+- CCCD đúng 12 chữ số : pattern="[0-9]{12}"
+    + [0-9]: chỉ cho nhập số
+    + {12}: được nhập 12 kí tự
+- số tài khoản đúng 15 chữ số pattern="[0-9]{10,15}"
+    + {10,15}: từ 10 đến 15 chữ số
+
+2.HTML5 validation có đủ an toàn cho ngân hàng không
+* Không đủ an toàn vì:
+  - HTML5 validation chỉ chạy ở phía client (trình duyệt)
+  - Người dùng có thể:
+        + Tắt validation (novalidate)
+        + Sửa code bằng DevTools
+        + Gửi request trực tiếp bằng tool (Postman, curl)
+
+3. 3 loại validation HTML5 KHÔNG làm được (phải dùng JS)
+* So sánh giữa các field
+ - Ví dụ:
+    + Nhập lại mật khẩu = mật khẩu?
+    + Ngày bắt đầu < ngày kết thúc?
+* Validation logic phức tạp
+ - Ví dụ:
+    + CMND phải hợp lệ theo thuật toán
+    + PIN không được là “123456” hoặc “000000”
+* Validation theo dữ liệu động (server/database)
+ - Ví dụ:
+    + mail đã tồn tại chưa?
+    + Số tài khoản có hợp lệ trong hệ thống không?
+
+4. 2 rủi ro nếu chỉ validate Frontend
+* Bypass validation (vượt qua kiểm tra)
+ - Hacker gửi dữ liệu:
+    + Sai format
+    + Dữ liệu độc hại
+     -> Server vẫn nhận → hệ thống lỗi / bị tấn công
+2. Injection attack
+* Ví dụ:
+ - SQL Injection
+ - XSS (chèn script)
+    -> Có thể:
+        +  bị Đánh cắp dữ liệu
+        + Chiếm quyền tài khoản
