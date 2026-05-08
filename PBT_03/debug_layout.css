@@ -1,0 +1,51 @@
+body {
+    font-family: Arial;
+}
+
+.container {
+    width: 960px;
+    margin: 20px auto;
+    border: 2px solid black;
+    overflow: hidden;
+}
+
+/* Cách 1 - BORDER BOX */
+
+
+.border-box-fix * {
+    box-sizing: border-box;
+}
+
+.border-box-fix .sidebar {
+    width: 300px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    float: left;
+    
+}
+
+.border-box-fix .content {
+    width: 660px;
+    padding: 30px;
+    border: 1px solid #ccc;
+    float: left;
+    
+}
+
+/* Cách - CONTENT BOX */
+
+.content-box-fix .sidebar {
+    width: 258px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    float: left;
+    
+}
+
+.content-box-fix .content {
+    width: 598px;
+    padding: 30px;
+    border: 1px solid #ccc;
+    float: left;
+    
+}
