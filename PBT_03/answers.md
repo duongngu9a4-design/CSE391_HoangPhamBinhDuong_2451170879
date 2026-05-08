@@ -80,17 +80,17 @@ h1 { color: #2563eb; font-size: 32px; }
 # Câu A3 (7đ) — Box Model — Tính toán kích thước
 
 * Trường hợp 1: content-box (mặc định)
-- Chiều rộng hiển thị : 400+20×2+5×2 = 450px
-- Không gian chiếm trên trang : Cộng thêm margin trái + phải 450+10×2=470px
+ - Chiều rộng hiển thị : 400+20×2+5×2 = 450px
+ - Không gian chiếm trên trang : Cộng thêm margin trái + phải 450+10×2=470px
 
 * Trường hợp 2: border-box
-- Trong border-box: width: 400px đã bao gồm content padding border -> Chiều rộng hiển thị = 400px
-- Kích thước content thực tế : Trừ đi padding và border hai bên 400−20×2−5×2=350px
-- Không gian chiếm trên trang : Cộng thêm margin 400+10×2=420px
+ - Trong border-box: width: 400px đã bao gồm content padding border -> Chiều rộng hiển thị = 400px
+ - Kích thước content thực tế : Trừ đi padding và border hai bên 400−20×2−5×2=350px
+ - Không gian chiếm trên trang : Cộng thêm margin 400+10×2=420px
 
 * Trường hợp 3: Margin Collapse
-- Khoảng cách giữa 2 box 40px
-- Tại sao KHÔNG phải 65px?
+ - Khoảng cách giữa 2 box 40px
+ - Tại sao KHÔNG phải 65px?
     + Vì trong CSS, margin dọc (margin-top và margin-bottom) của các block liền kề sẽ bị collapse (gộp margin)
     + CSS sẽ không cộng mà chỉ lấy margin lớn hơn nên khoảng cách cuối cùng chỉ là 40px.
 
@@ -128,22 +128,22 @@ h1 { color: #2563eb; font-size: 32px; }
 
 # Bài B2 (20đ) — Box Model Lab
 * Hộp 1 (content-box):
-- DevTools hiển thị content khoảng 300.111px,
-- Tính theo công thức: 300 + 20*2 + 5*2 = 350px
-- tổng chiều rộng thực tế khoảng 350px.
+ - DevTools hiển thị content khoảng 300.111px,
+ - Tính theo công thức: 300 + 20*2 + 5*2 = 350px
+ - tổng chiều rộng thực tế khoảng 350px.
 
 * Hộp 2 (border-box):
-- DevTools hiển thị content khoảng 251.111px,
-- Kích thước content thực tế: 300 - 20*2 - 5*2 = 250px
-- tổng chiều rộng vẫn là 300px.
+ - DevTools hiển thị content khoảng 251.111px,
+ - Kích thước content thực tế: 300 - 20*2 - 5*2 = 250px
+ - tổng chiều rộng vẫn là 300px.
 
 * Giải thích sự khác biệt
 
-- Với content-box:
+ - Với content-box:
     + Thuộc tính width chỉ tính phần content.
     + Padding và border được cộng thêm bên ngoài width nên kích thước thực tế lớn hơn.
 
-- Với border-box:
+ - Với border-box:
   Width đã bao gồm:
     + content
     + padding
@@ -173,6 +173,61 @@ nên tổng chiều rộng vẫn giữ nguyên 300px
 4. Thay đổi thứ tự rules trong CSS file. Kết quả có đổi không? Giải thích.
 - Kết quả không đổi vì CSS ưu tiên specificity trước rồi mới đến thứ tự xuất hiện 
 - Rule có specificity cao nhất vẫn là: `body p#demo.text.highlight` nên dù có đổi vị trí các rule khác thì cuối cùng vẫn là màu đen.Chỉ khi có hai rule có specificity bằng nhau thì rule viết sau sẽ thắng
+
+# Câu C1 (10đ) — Debug CSS Layout
+
+1. Tính chiều rộng thực tế (content-box mặc định)
+* Trong CSS mặc định: `box-sizing: content-box;`
+-> width chỉ tính phần content, chưa tính padding và border
+* Sidebar: `width: 300px; padding: 20px; border: 1px solid;`
+ - Chiều rộng thực tế:
+    + Content: 300px
+    + Padding trái + phải: 20 + 20 = 40px
+    + Border trái + phải: 1 + 1 = 2px
+ -> Tổng: 300 + 40 + 2 = 342px
+* Content width:` 660px; padding: 30px; border: 1px solid;`
+ - Chiều rộng thực tế:
+    + Content: 660px
+    + Padding trái + phải: 30 + 30 = 60px
+    + Border trái + phải: 1 + 1 = 2px
+ -> Tổng: 660 + 60 + 2 = 722px
+* Tổng chiều rộng layout 342 + 722 = 1064px trong khi .container chỉ có 960px => vượt quá container
+
+2. Giải thích tại sao layout bị vỡ
+- Vì: float: left; nên .sidebar và .content phải đủ chỗ để nằm cùng hàng.
+- Tổng chiều rộng thực tế = 1064px lớn hơn container = 960px
+=> .content không đủ chỗ nên bị đẩy xuống dòng mới.
+
+3. Đưa ra 2 cách sửa khác nhau (1 cách dùng border-box, 1 cách không dùng)
+- Cách 1: dùng box-sizing: border-box;
+- để width bao gồm luôn:
+    + content
+    + padding
+    + border
+ -> Tổng sidebar + content = 300 + 660 = 960px => vừa khít container
+- Cách 2: Giữ content-box, nhưng giảm width để bù cho padding + border.
+    + sidebar mới: width = 300 - 40 - 2 = 258px
+    + Content mới: width = 660 - 60 - 2 = 598px
+
+# Câu C2 (10đ) — Cascade Puzzle
+1. "Sản phẩm A" (h2) có font-size = ? và color = ?
+- có font-size = 20px và color = green vì:
+    + .title có font size riêng bằng 20px: `.card .title{font-size: 20px;}`
+    + xét 2 rule `.card { color: blue; }` và `.highlight { color: green !important; }` đều chỉ đến "Sản Phẩm A" thì ưu tiên là màu xanh lá cây vì `!important` thắng tất cả
+
+2. "Mô tả sản phẩm" (p trong card featured) có color = ?
+- có color = blue vì:
+    + xét 2 rule `.card p { color: inherit; }` `.card { color: blue; }` inherit = lấy từ .card nên có màu xanh
+
+3. "Sản phẩm B" (h2) có font-size = ? và color = ?
+- có font-size = 20px và color = blue vì
+    + `.card { color: blue; }` màu xanh
+    + `.card .title { font-size: 20px; }` font bằng 20px
+
+4. "Mô tả sản phẩm B" (p.highlight) có color = ?
+- có color = green vì
+    + `.highlight { color: green !important; }` : important luôn thắng tất cả các rule -> màu xanh lá cây
+
 
 
 
