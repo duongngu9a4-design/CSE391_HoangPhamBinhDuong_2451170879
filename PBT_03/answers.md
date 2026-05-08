@@ -126,6 +126,29 @@ h1 { color: #2563eb; font-size: 32px; }
 4. Nếu Rule A thêm !important, element có màu gì? Tại sao?
 - element sẽ có màu đen vì !important ưu tiên cao hơn specificity thông thường
 
+# Bài B2 (20đ) — Box Model Lab
+* Hộp 1 (content-box):
+- DevTools hiển thị content khoảng 300.111px,
+- Tính theo công thức: 300 + 20*2 + 5*2 = 350px
+- tổng chiều rộng thực tế khoảng 350px.
+
+* Hộp 2 (border-box):
+- DevTools hiển thị content khoảng 251.111px,
+- Kích thước content thực tế: 300 - 20*2 - 5*2 = 250px
+- tổng chiều rộng vẫn là 300px.
+
+* Giải thích sự khác biệt
+
+- Với content-box:
+    + Thuộc tính width chỉ tính phần content.
+    + Padding và border được cộng thêm bên ngoài width nên kích thước thực tế lớn hơn.
+
+- Với border-box:
+  Width đã bao gồm:
+    + content
+    + padding
+    + border
+nên tổng chiều rộng vẫn giữ nguyên 300px
 
 
 
