@@ -150,6 +150,31 @@ h1 { color: #2563eb; font-size: 32px; }
     + border
 nên tổng chiều rộng vẫn giữ nguyên 300px
 
+# Bài B3 (15đ) — Specificity Battle
+
+1. Liệt kê 10 rules + specificity score
+- `p`- Specificity: `0,0,1`
+- `body p`- Specificity: `0,0,2`
+- `.text`- Specificity: `0,1,0`
+- `p.text`- Specificity: `0,1,1`
+- `.text.highlight`- Specificity: `0,2,0`
+- `body p.text`- Specificity: `0,1,2`
+- `#demo`- Specificity: `1,0,0`
+- `p#demo`- Specificity: `1,0,1`
+- `#demo.highlight`- Specificity: `1,1,0`
+- `body p#demo.text.highlight`- Specificity: `1,2,2`
+
+2. Element cuối cùng hiển thị màu gì? Tại sao?
+- Hiển thị màu đen vì rule `body p#demo.text.highlight` có specificity cao nhất `1,2,2`, mạnh hơn tất cả các rule còn lại nên cuối cùng là màu đen
+
+3. Chụp screenshot kết quả
+- Ảnh trong thư mục screenshots
+
+4. Thay đổi thứ tự rules trong CSS file. Kết quả có đổi không? Giải thích.
+- Kết quả không đổi vì CSS ưu tiên specificity trước rồi mới đến thứ tự xuất hiện 
+- Rule có specificity cao nhất vẫn là: `body p#demo.text.highlight` nên dù có đổi vị trí các rule khác thì cuối cùng vẫn là màu đen.Chỉ khi có hai rule có specificity bằng nhau thì rule viết sau sẽ thắng
+
+
 
 
 
