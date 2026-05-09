@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Positioning Demo</title>
+    <link rel="stylesheet" href="positioning.css">
+</head>
+<body>
+
+    <!-- Fixed Header -->
+    <header class="header">
+        <div class="logo">MyLogo</div>
+        <nav class="nav">
+            <a href="#">Home</a>
+            <a href="#">Products</a>
+            <a href="#">Contact</a>
+        </nav>
+    </header>
+
+    <div class="layout">
+
+        <!-- Sidebar (Sticky) -->
+        <div class="sidebar">
+            <h3>Sidebar</h3>
+            <p>Menu item 1</p>
+            <p>Menu item 2</p>
+            <p>Menu item 3</p>
+        </div>
+
+        <!-- Main content -->
+        <main class="content">
+
+            <h2>Products</h2>
+
+            <div class="product-grid">
+
+                <div class="card">
+                    <div class="badge">HOT</div>
+                    <h3>Sản phẩm 1</h3>
+                    <p>mô tả...</p>
+                </div>
+
+                <div class="card">
+                    <div class="badge">HOT</div>
+                    <h3>Sản phẩm 2</h3>
+                    <p>mô tả...</p>
+                </div>
+
+                <div class="card">
+                    <div class="badge">HOT</div>
+                    <h3>Sản phẩm 3</h3>
+                    <p>mô tả...</p>
+                </div>
+
+            </div>
+
+            <!-- Fake scroll content -->
+            <div class="spacer"></div>
+
+        </main>
+    </div>
+
+    <!-- Scroll to top button -->
+    <button class="to-top">↑</button>
+
+</body>
+</html>
