@@ -192,7 +192,7 @@ Breakpoints chuẩn
 
  - Vite (React/Vue project):
    npm install -D sass
-   → Vite tự detect và compile .scss files
+   → Vite tự detect và compile .scss files 
 
  - Node.js script:
    npm install -D sass
