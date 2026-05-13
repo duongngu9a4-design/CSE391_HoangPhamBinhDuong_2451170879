@@ -169,7 +169,7 @@ Breakpoints chuẩn
 .btn-primary {
   @extend .btn;
   background: blue;
-}
+} 
 
 .btn-danger {
   @extend .btn;
