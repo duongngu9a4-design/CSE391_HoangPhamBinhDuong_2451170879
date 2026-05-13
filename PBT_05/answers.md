@@ -174,13 +174,13 @@ Breakpoints chuẩn
 .btn-danger {
   @extend .btn;
   background: red;
-}
+}git pull origin main --rebase
  - Ý nghĩa:
     + Tái sử dụng style
     + Tránh viết lại CSS giống nhau
 
 * Vì sao browser KHÔNG đọc được .scss?
- - Vì: 
+ - Vì:    
     + Trình duyệt chỉ hiểu: HTML, CSS, JavaScript
     + .scss là ngôn ngữ tiền xử lý (preprocessor)
     + Có syntax đặc biệt: $variable, @mixin, nesting... -> Browser không hiểu các cú pháp này
