@@ -5,7 +5,8 @@ Thông tin sinh viên
   - Email: hoangphambinhduong@gmail.com
 
 Tiến độ
-  - Phiếu Bài tập 1: Đã hoàn thành
-  - Phiếu Bài tập 2: còn video
-  - Phiếu Bài tập 3: còn video
-  - Phiếu Bài tập 4:
+  - Phiếu Bài tập 1
+  - Phiếu Bài tập 2 
+  - Phiếu Bài tập 3 
+  - Phiếu Bài tập 4
+  - Phiếu Bài tập 5
