@@ -201,3 +201,81 @@ Breakpoints chuẩn
  - Create React App:
    npm install sass
    → Đổi .css thành .scss → tự compile
+
+
+# Bài B3 — SCSS Refactor
+
+- Compiled: `scss/style.scss` → `style.css`
+- Output file: `PBT_05/style.css`
+- Time: 2026-05-27
+- Result: SUCCESS
+
+```bash
+sass scss/style.scss style.css --style=compressed
+```
+
+# Câu C1 — Phân tích trang web thực
+Chọn trang: YouTube
+
+1. Mobile 375px
+ - Navigation: xuất hiện hamburger trái, logo YouTube nhỏ, nút tìm kiếm, nút tạo, avatar.
+ - Lưới content: 1 cột chính, feed video xếp dọc.
+ - Elements ẩn: sidebar bên trái (Home/Shorts/Subscriptions…) và nhiều nút menu lớn, thanh  category đầy đủ.
+ - Font: nhỏ hơn, chữ và nút hiển thị gọn hơn.
+
+2. Tablet 768px
+ - Navigation: vẫn có hamburger, nhưng thấy nhiều nút hơn ở top; thanh tìm kiếm rộng hơn, list category xuất hiện rõ hơn.
+ - Lưới content: lưới nội dung bắt đầu mở rộng, ví dụ phần Shorts có 3 cards ngang; feed chính rộng hơn.
+ - Elements ẩn: vẫn chưa hiện sidebar trái đầy đủ như desktop.
+ - Font: lớn hơn mobile, khoảng cách thoáng hơn.
+
+3. Desktop 1440px
+ - Navigation: hiện đầy đủ sidebar bên trái, top bar rộng với thanh tìm kiếm, category pills, nút tạo, thông báo, avatar.
+ - Lưới content: nhiều cột hơn, phần Shorts hiển thị nhiều thumbnails ngang, feed chính có dạng đa cột rộng.
+ - Elements bị ẩn trên mobile: sidebar điều hướng, rất nhiều nút và tab phụ, các menu mở rộng.
+ - Font: lớn nhất, hiển thị thoải mái hơn trên màn hình rộng.
+
+# Câu C2 — Thiết kế Responsive Strategy
+
+Mobile:
+- Layout 1 cột.
+- Header gồm logo bên trái và số điện thoại đặt bàn bên phải.
+- Hero image full-width trên cùng.
+- Form đặt bàn xuất hiện ngay sau hero để người dùng đặt nhanh.
+- 6 ảnh món ăn xếp dọc 1 cột.
+- Map có thể được đặt cuối trang hoặc ẩn vào nút "Xem bản đồ" để giảm chiều cao trang.
+- Ẩn trên mobile: sidebar phụ, menu điều hướng rộng, nội dung quảng cáo không quan trọng.
+
+Tablet:
+- Layout chuyển sang 2 cột cho một số phần.
+- Header vẫn hiển thị logo + hotline nhưng rộng hơn.
+- Gallery ảnh xếp **2 cột**.
+- Form đặt bàn có thể đứng dưới hero hoặc nằm ở bên phải nếu đủ rộng.
+- Bản đồ Google Maps hiển thị phía dưới gallery hoặc cạnh form nếu đủ ngang.
+- Ẩn trên tablet: các thanh chức năng desktop rộng, nhiều chi tiết phụ không cần thiết.
+
+Desktop:
+- Layout 2 cột rõ ràng, có sidebar có thể dùng cho form + map.
+- Hero image full-width trên cùng.
+- Gallery ảnh xếp **3 cột** cho 6 món ăn.
+- Booking form và Google Maps nằm ở cột bên phải (sidebar) để giữ nội dung chính bên trái.
+- Footer full-width dưới cùng.
+
+CSS skeleton mobile-first (layout only):
+- Mobile: 1 cột, gallery 1 cột, form ngay dưới hero.
+- Tablet: gallery 2 cột, map vẫn hiển thị, layout mềm dẻo.
+- Desktop: layout 2 cột với sidebar chứa form + map, gallery 3 cột.
+- Dùng `display: grid` cho `.page`, `.gallery`, `.booking-form` và `@media (min-width: 768px)` / `@media (min-width: 1024px)`.
+
+File skeleton: `PBT_05/c2-skeleton.css`
+
+
+
+
+
+
+
+
+
+
+
