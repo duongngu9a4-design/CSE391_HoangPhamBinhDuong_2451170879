@@ -382,3 +382,78 @@ Template Literal sử dụng dấu backtick (`) và cú pháp `${biến}` để 
 * Hỗ trợ xuống dòng tự nhiên.
 * Không cần dùng toán tử `+` liên tục.
 
+# Câu C1 (10đ) — Debug JavaScript
+# Lỗi 1: Thiếu dấu ;
+ - return "Phần trăm giảm không hợp lệ"
+ - Sửa: return "Phần trăm giảm không hợp lệ";
+ - Giải thích: JavaScript có cơ chế tự chèn dấu ; (ASI), nhưng nên viết đầy đủ để tránh lỗi khó phát hiện.
+
+# Lỗi 2: So sánh bằng nhưng lại dùng phép gán
+
+ - if (giaSauGiam = 0)
+ - Sửa: if (giaSauGiam === 0)
+ - Giải thích
+    + = là phép gán.
+    + == hoặc === là phép so sánh.
+ - Code cũ: giaSauGiam = 0 sẽ gán giá trị 0 cho biến rồi điều kiện luôn là false.
+
+# Lỗi 3: Truyền giá bán dưới dạng chuỗi
+ - const gia = tinhGiaGiamGia("100000", 20)
+ - Sửa :const gia = tinhGiaGiamGia(100000, 20)
+ - Giải thích: "100000" là chuỗi.
+ - Mặc dù JavaScript tự ép kiểu:"100000" * 20
+ -> vẫn ra kết quả đúng, nhưng đây là cách viết không an toàn và dễ gây lỗi khi dữ liệu thay đổi.
+
+# Lỗi 4: Không kiểm tra kiểu dữ liệu đầu vào
+
+ - Hàm hiện tại không kiểm tra:
+    giaBan
+    phanTramGiam
+ có phải số hay không.
+ - Sửa:
+ if (
+    typeof giaBan !== "number" ||
+    typeof phanTramGiam !== "number"
+ ) {
+    return "Dữ liệu không hợp lệ";
+ }
+ - Giải thích Nếu truyền: tinhGiaGiamGia("abc", 20) sẽ cho ra NaN.
+
+ # Lỗi 5: Không kiểm tra giá bán âm
+ - Ví dụ: tinhGiaGiamGia(-100000, 20) vẫn chạy.
+ - Sửa
+ if (giaBan < 0) {
+    return "Giá bán không hợp lệ";
+ }
+ - Giải thích: Giá sản phẩm không thể âm.
+
+ # Lỗi 6: Lỗi "ẩn" liên quan đến var trong vòng lặp
+
+ - Code:
+
+ for (var i = 0; i < 5; i++) {
+    setTimeout(function() {
+        console.log("Item " + i)
+    }, 1000)
+ }
+ - Kết quả thực tế sau 1 giây:
+Item 5
+Item 5
+Item 5
+Item 5
+Item 5
+ - var có phạm vi hàm (function scope).Tất cả callback của setTimeout dùng chung một biến i.Khi vòng lặp kết thúc:i = 5 nên các callback đều in ra 5.
+
+ - Sửa bằng let
+ for (let i = 0; i < 5; i++) {
+    setTimeout(function() {
+        console.log("Item " + i)
+    }, 1000)
+ }
+ - Kết quả
+Item 0
+Item 1
+Item 2
+Item 3
+Item 4
+ - Giải thích: let có phạm vi block.Mỗi lần lặp sẽ tạo một biến i riêng cho callback.
