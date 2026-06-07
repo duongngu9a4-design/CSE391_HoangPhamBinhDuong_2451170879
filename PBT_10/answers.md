@@ -139,4 +139,98 @@ run();
     + Tránh Callback Hell.
 
 
+# Câu C1 (10đ) — Error Handling Strategy
+
+1. Network Errors (Mất mạng giữa chừng)
+ - Chiến lược: * Phát hiện chủ động: Sử dụng sự kiện window.addEventListener('online'/'offline') để cập nhật trạng thái kết nối toàn ứng dụng.
+ - Xử lý giao diện (UX): Hiển thị một thanh thông báo cố định (Sticky Banner) báo mất kết nối. Đối với các hành động quan trọng như nhấn nút "Thanh toán", hệ thống sẽ vô hiệu hóa (disable) nút bấm ngay lập tức và đưa đơn hàng vào hàng đợi local (IndexedDB hoặc LocalStorage) để tự động đồng bộ lại khi có mạng.
+
+2. API Errors (Server trả về mã lỗi HTTP)
+ - Mỗi nhóm mã lỗi phản ánh một nguyên nhân khác nhau, do đó cần có kịch bản ứng phó riêng biệt:
+    + Mã 404 Not Found (Sai đường dẫn/Sản phẩm không tồn tại): Xử lý: Không retry. Điều hướng người dùng về trang lỗi 404 tùy biến (Custom 404 Page) kèm nút "Quay lại trang chủ" hoặc gợi ý các sản phẩm tương tự để giữ chân khách hàng.
+    + Mã 429 Too Many Requests (Bị giới hạn tần suất gọi API - Rate Limit): Xử lý: Đọc giá trị từ HTTP Header Retry-After do server trả về (nếu có) để biết cần đợi chính xác bao lâu. Nếu không có header này, áp dụng thuật toán Exponential Backoff (chờ lũy tiến: 2s -> 4s -> 8s) trước khi tự động gửi lại request.
+    + Mã 500 Internal Server Error (Lỗi hệ thống phía Backend):  Xử lý: Đây thường là lỗi tạm thời của server. Hệ thống sẽ tự động kích hoạt Retry logic (thử lại tối đa 3 lần). Nếu sau 3 lần vẫn lỗi, hiển thị Toast thông báo: "Hệ thống đang quá tải, vui lòng thử lại sau vài phút".
+
+3. Timeout (API phản hồi quá chậm > 10 giây)
+ - Chiến lược: Trình duyệt không nên treo đợi API vô thời hạn vì sẽ làm đơ giao diện. Chúng ta sử dụng AbortController để chủ động hủy (cancel) request fetch nếu vượt quá thời gian cấu hình.
+ - Code triển khai fetchWithTimeout:
+ async function fetchWithTimeout(url, options = {}, ms = 10000) {
+    // Tạo bộ điều khiển hủy tín hiệu
+    const controller = new AbortController();
+    const { signal } = controller;
+
+    // Thiết lập đếm ngược thời gian, hết hạn sẽ kích hoạt abort()
+    const timeoutId = setTimeout(() => controller.abort(), ms);
+
+    try {
+        const response = await fetch(url, { ...options, signal });
+        clearTimeout(timeoutId); // Xóa bộ đếm nếu fetch về kịp lúc
+        return response;
+    } catch (error) {
+        clearTimeout(timeoutId);
+        if (error.name === 'AbortError') {
+            throw new Error(`Yêu cầu bị hủy do quá thời gian phản hồi (${ms}ms)`);
+        }
+        throw error;
+    }
+}
+ - Giải thích:Trình duyệt mặc định không có cơ chế tự ngắt lệnh fetch nếu server bị treo. Để làm được việc này, chúng ta phải dùng một "nút bấm tự hủy ngầm" tên là AbortController.
+    + const controller = new AbortController(): Tạo ra một bộ điều khiển tín hiệu hủy. Nó cung cấp một chiếc chìa khóa tên là signal.
+    + fetch(url, { signal }): Bạn cắm chiếc chìa khóa signal này vào trong hàm fetch. Trình duyệt sẽ hiểu là: "Hãy vừa tải ảnh/dữ liệu, vừa chú ý nhìn vào chiếc chìa khóa này. Nếu chiếc khóa này bị bẻ, lập tức dừng ngay việc tải, không chờ nữa".
+    + setTimeout(() => controller.abort(), ms): Đây là cái đồng hồ bấm giờ. Nếu đồng hồ chạy hết ms (ví dụ 10.000ms = 10 giây) mà dữ liệu vẫn chưa về, nó sẽ kích hoạt lệnh .abort(). Lệnh này chính là hành động "bẻ khóa", ép fetch phải dừng lại ngay lập tức và ném ra một lỗi có tên là AbortError.
+    + clearTimeout(timeoutId): Nếu mạng nhanh, dữ liệu về trước 10 giây, dòng lệnh này sẽ đập tan cái đồng hồ bấm giờ đi, không cho nó kích hoạt lệnh tự hủy nữa.
+
+4. Retry Logic (Thử lại tự động khi gặp lỗi mạng hoặc 5xx)
+ - Chiến lược: Tự động gửi lại request tối đa 3 lần, kết hợp cơ chế hoãn tăng dần (Delay) để tránh làm nghẽn thêm hệ thống đang quá tải.
+ - Code triển khai fetchWithRetry:
+ // Hàm helper tạo độ trễ (delay) dạng chân thực bằng Promise
+const delay = (ms) => new Promise(resolve => setTimeout(resolve, ms));
+
+async function fetchWithRetry(url, options = {}, maxRetries = 3, delayMs = 1500) {
+    let lastError;
+
+    for (let i = 0; i < maxRetries; i++) {
+        try {
+            // Kết hợp hàm timeout ở mục 3 vào trong vòng lặp retry
+            const response = await fetchWithTimeout(url, options, 10000);
+
+            // Nếu kết nối thành công nhưng server trả lỗi 5xx hoặc 429, ta vẫn ép thử lại
+            if (!response.ok) {
+                if (response.status === 500 || response.status === 503 || response.status === 429) {
+                    throw new Error(`HTTP_${response.status}`);
+                }
+                // Nếu là lỗi 404 hoặc 403, trả về luôn chứ không retry vô ích
+                return response; 
+            }
+
+            return response; // Thành công mỹ mãn, trả về kết quả
+        } catch (error) {
+            lastError = error;
+            console.warn(`Lần thử ${i + 1} thất bại. Lỗi: ${error.message}. Đang thử lại sau ${delayMs}ms...`);
+            
+            // Nếu là lần thử cuối cùng thì không cần đứng đợi delay nữa
+            if (i < maxRetries - 1) {
+                // Áp dụng Exponential Backoff nhân đôi thời gian chờ ở các hiệp sau
+                await delay(delayMs * Math.pow(2, i)); 
+            }
+        }
+    }
+
+    // Sau khi đã cạn kiệt số lần thử mà vẫn thất bại
+    throw new Error(`Yêu cầu thất bại hoàn toàn sau ${maxRetries} lần thử. Lỗi gốc: ${lastError.message}`);
+}
+ - Giải thích: Ý tưởng của hàm này là dùng một vòng lặp for chạy từ 0 đến maxRetries (3 lần). Nếu một lần thử bị lỗi, thay vì làm sập app, nó sẽ nuốt lỗi đó vào biến lastError, đứng đợi một chút rồi chạy tiếp vòng lặp để thử lại.
+    + if (!response.ok): Dòng này cực kỳ quan trọng. Khi bạn bị mất mạng, fetch sẽ tự nhảy vào khối catch. Nhưng nếu mạng không mất, server chỉ bị quá tải và trả về mã 500 hoặc 429, thì đối với trình duyệt, request đó vẫn tính là "thành công" (vì có phản hồi). Do đó, ta phải dùng lệnh throw new Error để ép nó biến thành một lỗi, bắt nó phải nhảy xuống khối catch để kích hoạt vòng lặp thử lại lần sau.
+    + if (response.status === 404): Đoạn này để tối ưu hệ thống. Nếu server báo 404 (đường dẫn này không tồn tại), thì bạn có thử lại 100 lần kết quả vẫn là không tồn tại. Nên ta dùng lệnh return response để trả kết quả về luôn, không kích hoạt thử lại làm nghẽn mạng.
+    + await delay(delayMs * Math.pow(2, i)): Đây là thuật toán Exponential Backoff (Lùi bước lũy tiến).
+    + throw new Error(...) ở cuối hàm: Dòng này chỉ chạy khi vòng lặp for đã quay hết cả 3 lần mà vẫn dính lỗi. Lúc này hệ thống chính thức "buông xuôi", báo cáo lỗi cuối cùng lên màn hình cho người dùng biết.
+
+# Câu C2 (10đ) — Promise.all vs Promise.allSettled vs Promise.race vs Promise.any
+
+| Method                 | Khi nào resolve?                                       | Khi nào reject?                | Use case                                 |
+| ---------------------- | ------------------------------------------------------ | ------------------------------ | ---------------------------------------- |
+| `Promise.all()`        | Tất cả Promise đều thành công                          | Chỉ cần 1 Promise lỗi          | Tải nhiều dữ liệu bắt buộc phải có đủ    |
+| `Promise.allSettled()` | Khi tất cả Promise kết thúc (thành công hoặc thất bại) | Không reject                   | Thống kê kết quả của nhiều tác vụ        |
+| `Promise.race()`       | Promise đầu tiên hoàn thành (resolve hoặc reject)      | Nếu Promise đầu tiên bị reject | Timeout, chọn server phản hồi nhanh nhất |
+| `Promise.any()`        | Promise đầu tiên resolve                               | Khi tất cả Promise đều reject  | Tìm nguồn dữ liệu đầu tiên thành công    |
 
