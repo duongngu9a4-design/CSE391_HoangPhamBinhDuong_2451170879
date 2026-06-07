@@ -111,3 +111,88 @@ const reversedNums = [...nums].reverse(); // Hoặc: nums.toReversed(); (Hỗ tr
     + Đối với các thuộc tính là một Object lồng bên trong (như specs), Spread Operator không tạo ra một Object specs mới, mà nó chỉ sao chép cái địa chỉ vùng nhớ (reference) của specs cũ sang cho copy.
     + Do đó, cả product.specs và copy.specs đều đang trỏ chung vào cùng một ô nhớ trên Heap. Khi bạn thay đổi copy.specs.ram = 16, bạn vô tình đã làm thay đổi object chung đó, khiến product.specs.ram của object gốc bị đổi theo.
 
+# Câu C1 (10đ) — Refactor Code
+ - code đã sửa:
+ ```
+ const processOrders = (orders) => 
+    orders
+        .filter(({ status, total }) => status === "completed" && total > 100000)
+        .map(({ id, customer, total }) => ({
+            id, customer, total,
+            discount: total * 0.1,
+            finalTotal: total * 0.9
+        }))
+        .sort((a, b) => b.finalTotal - a.price); // Sắp xếp giảm dần theo finalTotal 
+```
+ - Giải thích các điểm cải tiến:
+    
+    + filter kết hợp Destructuring: Thay vì bóc tách thủ công hoặc ghi orders[i].status, chúng ta dùng { status, total } để lấy trực tiếp thuộc tính cần thiết ra check điều kiện ngay ở tham số. Gộp 2 tầng if thành 1 dòng bằng toán tử &&.
+    + map trả về Object Literal: Khi dùng Arrow Function để trả về một Object, bạn chỉ cần bọc Object đó trong dấu ngoặc đơn ({ ... }). Chúng ta tính toán luôn discount và finalTotal ($total \times 0.9$) vô cùng ngắn gọn.
+    + sort chuẩn hóa: Thay thế toàn bộ 2 vòng lặp for sắp xếp phức tạp bằng phương thức .sort(). Phép tính b.finalTotal - a.finalTotal đảm bảo mảng được sắp xếp giảm dần (Descending).
+
+# Câu C2 (10đ) — Thiết kế API
+
+```
+const miniArray = {
+    // 1. Hàm map: Tạo một mảng mới với các phần tử là kết quả của việc thực thi hàm fn trên từng phần tử mảng cũ
+    map(arr, fn) {
+        const result = [];
+        for (let i = 0; i < arr.length; i++) {
+            // fn nhận vào 3 tham số chuẩn: phần tử hiện tại, chỉ số, và mảng gốc
+            result.push(fn(arr[i], i, arr));
+        }
+        return result;
+    },
+
+    // 2. Hàm filter: Tạo một mảng mới chứa các phần tử thỏa mãn điều kiện của hàm fn (hàm fn trả về true)
+    filter(arr, fn) {
+        const result = [];
+        for (let i = 0; i < arr.length; i++) {
+            // Nếu hàm fn trả về giá trị mang tính đúng đắn (truthy)
+            if (fn(arr[i], i, arr)) {
+                result.push(arr[i]);
+            }
+        }
+        return result;
+    },
+
+    // 3. Hàm reduce: Tích lũy các phần tử của mảng thành một giá trị duy nhất
+    reduce(arr, fn, initialValue) {
+        // Kiểm tra xem người dùng có truyền vào giá trị khởi tạo (initialValue) hay không
+        const hasInitialValue = initialValue !== undefined;
+        
+        // Nếu có initialValue thì biến tích lũy (accumulator) lấy giá trị đó, chỉ số bắt đầu duyệt là 0
+        // Nếu KHÔNG có, accumulator lấy phần tử đầu tiên của mảng arr[0], chỉ số bắt đầu duyệt là 1
+        let accumulator = hasInitialValue ? initialValue : arr[0];
+        let startIndex = hasInitialValue ? 0 : 1;
+
+        // Xử lý trường hợp mảng rỗng và không có initialValue (giống đặc tả lỗi của JavaScript gốc)
+        if (arr.length === 0 && !hasInitialValue) {
+            throw new TypeError("Reduce of empty array with no initial value");
+        }
+
+        for (let i = startIndex; i < arr.length; i++) {
+            // Cập nhật lại accumulator sau mỗi lần chạy hàm fn
+            accumulator = fn(accumulator, arr[i], i, arr);
+        }
+        
+        return accumulator;
+    }
+};
+
+// ==========================================
+// CHẠY KIỂM THỬ (TEST CASES PASSED)
+// ==========================================
+
+console.log("=== TEST MAP ===");
+console.log(miniArray.map([1, 2, 3], x => x * 2));        // → [2, 4, 6]
+
+console.log("\n=== TEST FILTER ===");
+console.log(miniArray.filter([1, 2, 3, 4], x => x > 2));    // → [3, 4]
+
+console.log("\n=== TEST REDUCE ===");
+console.log(miniArray.reduce([1, 2, 3, 4], (a, b) => a + b, 0)); // → 10
+
+// Test nâng cao với reduce khi KHÔNG truyền initialValue
+console.log(miniArray.reduce([1, 2, 3, 4], (a, b) => a + b));    // → 10 (vẫn đúng vì lấy 1 làm gốc, cộng từ 2)
+```
